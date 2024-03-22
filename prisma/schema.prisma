@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Funcionario {
+  id    String @id @default(uuid())
+  nome  String
+  idade String
+  cargo String
+
+  @@map("funcionario")
+}
+
+model User {
+  name            String
+  email           String    @unique
+  password        String
+  confirmPassword String?
+  id              String    @id @default(uuid())
+  refrashToken    RefrashToken[]
+
+  @@map("user")
+}
+
+model RefrashToken {
+  id          String   @id @unique @default(uuid())
+  hashedToken String
+  userId      String
+  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  revoked     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("refrashToken")
+}
